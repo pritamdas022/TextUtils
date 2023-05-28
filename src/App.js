@@ -1,24 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+
+import About from "./components/About";
+import { useState } from "react";
+import Alert from "./components/Alert";
+import Navbar from "./components/Navbar";
+import TextForm from "./components/TextForm";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
 
 function App() {
+  const [mode, setMode] = useState("light");
+  const [btn, setBtn] = useState("Dark Mode");
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (massage, type) => {
+    setAlert({
+      msg: massage,
+      type: type,
+    });
+    setInterval(() => {
+      showAlert(null);
+    }, 1500);
+  };
+
+  const toggleMode = () => {
+    if (mode === "light") {
+      setMode("dark");
+      setBtn("Light Mode");
+      document.body.style.backgroundColor = "#1b2b3b";
+      showAlert("Dark Mode has been enableed", "success");
+      document.title = "TextUtils - Dark Mode";
+    } else {
+      setMode("light");
+      setBtn("Dark Mode");
+      document.body.style.backgroundColor = "white";
+      showAlert("Light Mode has been enableed", "success");
+      document.title = "TextUtils - Light Mode";
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Navbar mode={mode} toggleMode={toggleMode} btn={btn} />
+        <Alert alert={alert} />
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={<TextForm mode={mode} showalert={showAlert} />}
+          ></Route>
+          <Route exact path="/about" element={<About mode={mode}/>}></Route>
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
